@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unicode Emojis</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>😎</text></svg>"
+    />
+
+    <style>
+      body {
+        font-family: "Courier New", Helvetica, Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        padding: 20px;
+        background-color: #829bad;
+        overflow: scroll;
+        overflow-x: hidden;
+      }
+      #main {
+        width: 70%;
+        user-select: none;
+      }
+      h1 {
+        font-size: 32px;
+        margin: 20 0px;
+      }
+      h2,
+      h3 {
+        text-align: left;
+        text-transform: uppercase;
+        font-size: 20px;
+        letter-spacing: 2px;
+      }
+      .emoji {
+        font-size: 40px;
+        cursor: pointer;
+        padding: 2px 4px;
+        vertical-align: middle;
+        display: inline-block;
+        height: 60px;
+        min-width: 60px;
+        text-align: center;
+      }
+      .emoji:hover {
+        background: #eee;
+      }
+      #copyAlert {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: black;
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+        opacity: 0;
+        transition: opacity 0.5s;
+      }
+      #emojiFilter {
+        padding: 10px;
+        margin: 10px 0;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="main">
+      <h1>Unicode Emojis! 😁</h1>
+      <p id="introduction">
+        Click emoji to copy to clipboard, use input to filter out emojis.
+      </p>
+      <input type="text" id="emojiFilter" placeholder="Filter emojis..." />
+      <div id="emoji-container"></div>
+    </div>
+    <div id="copyAlert">Emoji copied to clipboard!</div>
+
+    <script src="emojis.js"></script>
+    <script>
+      async function displayEmojis() {
+        const container = document.getElementById("emoji-container");
+        emojis.groups.forEach((group) => {
+          // Create and append group header
+          const groupHeader = document.createElement("h2");
+          groupHeader.textContent = group.group;
+
+          // Create a container for emojis
+          const groupDiv = document.createElement("div");
+          groupDiv.classList.add("emojis-block");
+          groupDiv.appendChild(groupHeader);
+
+          // Add emojis to the container
+          group.emojis.forEach((emoji) => {
+            const emojiSpan = document.createElement("span");
+            emojiSpan.classList.add("emoji");
+            emojiSpan.textContent = emoji.emoji;
+            emojiSpan.title = emoji.description;
+            groupDiv.appendChild(emojiSpan);
+          });
+
+          container.appendChild(groupDiv);
+        });
+      }
+
+      function showCopyNotification() {
+        const alertBox = document.getElementById("copyAlert");
+        alertBox.style.display = "block";
+        alertBox.style.opacity = 1;
+        setTimeout(() => {
+          alertBox.style.opacity = 0;
+        }, 1500); // Fade out after 2 seconds
+        setTimeout(() => {
+          alertBox.style.opacity = 0;
+        }, 1500); // Hide after 2.5 seconds
+      }
+
+      function initFilterBox() {
+        const filterInput = document.getElementById("emojiFilter");
+
+        filterInput.addEventListener("input", () => {
+          const filterValue = filterInput.value.toLowerCase();
+
+          document.querySelectorAll(".emojis-block").forEach((group) => {
+            let hasVisibleEmojis = false;
+
+            console.log(group);
+
+            group.querySelectorAll(".emoji").forEach((emoji) => {
+              // Use the title attribute for filtering
+              if (emoji.title.toLowerCase().includes(filterValue)) {
+                emoji.style.display = "";
+                hasVisibleEmojis = true;
+              } else {
+                emoji.style.display = "none";
+              }
+            });
+
+            group.style.display = hasVisibleEmojis ? "" : "none";
+          });
+        });
+      }
+
+      async function loadAndSetupEmojis(groups) {
+        await displayEmojis();
+        initFilterBox();
+
+        document.querySelectorAll("span.emoji").forEach(function (element) {
+          element.addEventListener("click", function () {
+            var text = this.innerText;
+            navigator.clipboard
+              .writeText(text)
+              .then(function () {
+                showCopyNotification();
+              })
+              .catch(function (err) {});
+          });
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", loadAndSetupEmojis);
+    </script>
+  </body>
+</html>

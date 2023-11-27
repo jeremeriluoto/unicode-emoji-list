@@ -1,0 +1,30 @@
+{
+  "name": "unicode-emojis-list",
+  "author": "Jere Meriluoto",
+  "version": "1.0.0",
+  "description": "Easily list, filter and copy unicode emojis!",
+  "keywords": [
+    "unicode",
+    "emojis",
+    "JavaScript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jeremeriluoto/unicode-emoji-list"
+  },
+  "bugs": {
+    "url": "https://github.com/jeremeriluoto/unicode-emojis-list/issues"
+  },
+  "type": "module",
+  "scripts": {
+    "parse-emojis": "node parser/emojiparser.js",
+    "open": "open-cli index.html"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "open-cli": "^7.2.0"
+  }
+}
